@@ -56,7 +56,7 @@ The `toJson` method returns the representation of the object in **JSON** format.
 ```php
 $amount = new Amount(value: 1.25, currency: 'USD');
 
-echo $amount->toJson(); # {"value":1.25,"currency":"USD"}
+$amount->toJson(); # {"value":1.25,"currency":"USD"}
 ```
 
 ### Using the toArray method
@@ -66,16 +66,18 @@ The `toArray` method returns the representation of the object in **array** forma
 ```php
 $amount = new Amount(value: 1.25, currency: 'USD');
 
-print_r($amount->toArray()); # Array
-                             # (
-                             #     [value] => 1.25
-                             #     [currency] => USD
-                             # )
+$amount->toArray(); # Array
+                    # (
+                    #     [value] => 1.25
+                    #     [currency] => USD
+                    # )
 ```
+
+<div id='license'></div>
 
 ## License
 
-Math is licensed under [MIT](/LICENSE).
+Serializer is licensed under [MIT](LICENSE).
 
 <div id='contributing'></div>
 
