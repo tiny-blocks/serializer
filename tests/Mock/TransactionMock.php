@@ -2,9 +2,9 @@
 
 namespace TinyBlocks\Serializer\Mock;
 
-final class TransactionMock
+final readonly class TransactionMock
 {
-    public function __construct(private readonly int $id, private readonly AmountMock $amount)
+    public function __construct(private int $id, private AmountMock $amount)
     {
     }
 }
