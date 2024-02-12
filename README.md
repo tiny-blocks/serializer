@@ -39,11 +39,11 @@ namespace Example;
 use TinyBlocks\Serializer\Serializer;
 use TinyBlocks\Serializer\SerializerAdapter;
 
-final class Amount implements Serializer
+final readonly class Amount implements Serializer
 {
     use SerializerAdapter;
 
-    public function __construct(private readonly float $value, private readonly string $currency)
+    public function __construct(private float $value, private string $currency)
     {
     }
 }
