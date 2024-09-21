@@ -13,7 +13,7 @@
     },
     "mutators": {
         "@default": true,
-        "Continue_": false,
+        "MatchArmRemoval": false,
         "PublicVisibility": false,
         "ProtectedVisibility": false
     },
