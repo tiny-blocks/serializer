@@ -6,8 +6,12 @@ namespace TinyBlocks\Serializer;
 
 use TinyBlocks\Serializer\Internal\Serializable;
 
-trait SerializerAdapter
+final readonly class IterableSerializer implements Serializer
 {
+    public function __construct(private iterable $iterable)
+    {
+    }
+
     public function toJson(): string
     {
         return json_encode($this->toArray(), JSON_PRESERVE_ZERO_FRACTION);
@@ -15,8 +19,7 @@ trait SerializerAdapter
 
     public function toArray(bool $shouldPreserveKeys = self::PRESERVE_KEYS): array
     {
-        $values = get_object_vars($this);
-        $serializable = new Serializable(iterable: $values, shouldPreserveKeys: $shouldPreserveKeys);
+        $serializable = new Serializable(iterable: $this->iterable, shouldPreserveKeys: $shouldPreserveKeys);
 
         return $serializable->serializeToArray();
     }
