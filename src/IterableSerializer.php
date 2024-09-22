@@ -4,23 +4,29 @@ declare(strict_types=1);
 
 namespace TinyBlocks\Serializer;
 
-use TinyBlocks\Serializer\Internal\Serializable;
+use TinyBlocks\Serializer\Internal\ArraySerializer;
+use TinyBlocks\Serializer\Internal\JsonSerializer;
 
 final readonly class IterableSerializer implements Serializer
 {
-    public function __construct(private iterable $iterable)
+    private JsonSerializer $jsonSerializer;
+    private ArraySerializer $arraySerializer;
+
+    public function __construct(iterable $iterable)
     {
+        $this->jsonSerializer = new JsonSerializer();
+        $this->arraySerializer = new ArraySerializer(iterable: $iterable);
     }
 
     public function toJson(): string
     {
-        return json_encode($this->toArray(), JSON_PRESERVE_ZERO_FRACTION);
+        $data = $this->arraySerializer->toArray();
+
+        return $this->jsonSerializer->serialize(data: $data);
     }
 
-    public function toArray(bool $shouldPreserveKeys = self::PRESERVE_KEYS): array
+    public function toArray(SerializeKeys $serializeKeys = SerializeKeys::PRESERVE): array
     {
-        $serializable = new Serializable(iterable: $this->iterable, shouldPreserveKeys: $shouldPreserveKeys);
-
-        return $serializable->serializeToArray();
+        return $this->arraySerializer->toArray(serializeKeys: $serializeKeys);
     }
 }
