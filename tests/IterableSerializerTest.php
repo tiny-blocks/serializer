@@ -20,6 +20,11 @@ use TinyBlocks\Serializer\Models\NonSerializable\Product;
 
 final class IterableSerializerTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        date_default_timezone_set('UTC');
+    }
+
     #[DataProvider('discardKeysDataProvider')]
     public function testDiscardKeys(iterable $iterable, array $expected): void
     {
