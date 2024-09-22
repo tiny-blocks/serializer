@@ -7,6 +7,7 @@ namespace TinyBlocks\Serializer;
 use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use TinyBlocks\Serializer\Models\NonSerializable\Amount;
@@ -20,11 +21,6 @@ use TinyBlocks\Serializer\Models\NonSerializable\Product;
 
 final class IterableSerializerTest extends TestCase
 {
-    public static function setUpBeforeClass(): void
-    {
-        date_default_timezone_set('UTC');
-    }
-
     #[DataProvider('discardKeysDataProvider')]
     public function testDiscardKeys(iterable $iterable, array $expected): void
     {
@@ -79,8 +75,11 @@ final class IterableSerializerTest extends TestCase
 
     public static function toJsonDataProvider(): array
     {
+        $spTimeZone = new DateTimeZone('America/Sao_Paulo');
+        $nyTimeZone = new DateTimeZone('America/New_York');
+
         $customerWithNoOrders = new Customer(
-            id: '311dbf69-610e-41ef-b435-cf5654776bc5',
+            id: 'b2e82fe8-47b6-4b0e-ab6d-ad0e32089a0d',
             orders: new Orders()
         );
 
@@ -88,51 +87,73 @@ final class IterableSerializerTest extends TestCase
             id: 'abcdefab-abcd-abcd-abcd-abcdefabcdef',
             orders: new Orders(elements: [
                 new Order(
-                    id: 20000000,
+                    id: 157,
                     products: [
                         new Product(
-                            name: 'Product Z',
-                            amount: new Amount(value: 299.99, currency: Currency::USD),
-                            features: [new Feature(color: Color::WHITE)],
-                            stockBatch: new ArrayIterator([100])
+                            name: 'Product XPTO',
+                            amount: new Amount(value: 8000.01, currency: Currency::BRL),
+                            features: [],
+                            stockBatch: new ArrayIterator([123, 1230])
                         )
                     ],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '2020-01-01 00:00:00',
+                        $spTimeZone
+                    )
                 )
             ])
         );
 
         $customerWithMixedOrders = new Customer(
-            id: '56789abc-5678-5678-5678-56789abcdef0',
+            id: 'ecdad865-9289-4ffc-8a3f-7ebb953c9032',
             orders: new Orders(elements: [
                 new Order(
-                    id: 30000000,
+                    id: 123456789,
                     products: [
                         new Product(
-                            name: 'Product A',
-                            amount: new Amount(value: 50.0, currency: Currency::BRL),
+                            name: 'Product B',
+                            amount: new Amount(value: 50.05, currency: Currency::BRL),
                             features: [],
                             stockBatch: new ArrayIterator([])
                         )
                     ],
                     createdAt: DateTimeImmutable::createFromFormat(
                         DateTimeInterface::ISO8601_EXPANDED,
-                        '1997-01-01T01:15:00+00:00'
+                        '1997-01-01T01:15:00+00:00',
+                        $spTimeZone
                     )
                 ),
                 new Order(
-                    id: 30000001,
+                    id: 666,
                     products: [
                         new Product(
-                            name: 'Product B',
-                            amount: new Amount(value: 150.75, currency: Currency::EUR),
+                            name: 'Product SSS+',
+                            amount: new Amount(value: 150.99, currency: Currency::EUR),
                             features: [new Feature(color: Color::RED)],
-                            stockBatch: new ArrayIterator([5])
+                            stockBatch: new ArrayIterator([5, 20])
                         )
                     ],
                     createdAt: DateTimeImmutable::createFromFormat(
-                        DateTimeInterface::ATOM,
-                        '1997-01-01T20:00:00+00:00'
+                        'Y-m-d H:i:s',
+                        '1997-01-01 01:15:00',
+                        $nyTimeZone
+                    )
+                ),
+                new Order(
+                    id: 30000002,
+                    products: [
+                        new Product(
+                            name: 'Product C',
+                            amount: new Amount(value: 99.99, currency: Currency::USD),
+                            features: [],
+                            stockBatch: new ArrayIterator([10])
+                        )
+                    ],
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '1997-01-01 02:30:00',
+                        $spTimeZone
                     )
                 )
             ])
@@ -142,40 +163,48 @@ final class IterableSerializerTest extends TestCase
             id: '88ecb5f8-ef13-4026-a002-9baad15f7a26',
             orders: new Orders(elements: [
                 new Order(
-                    id: 10000000,
+                    id: PHP_INT_MAX,
                     products: [
                         new Product(
-                            name: 'Product X',
-                            amount: new Amount(value: 1099.99, currency: Currency::USD),
+                            name: 'Product XZ',
+                            amount: new Amount(value: 662, currency: Currency::USD),
                             features: [new Feature(color: Color::RED)],
                             stockBatch: new ArrayIterator([45000])
                         ),
                         new Product(
-                            name: 'Product Y',
-                            amount: new Amount(value: 123.0005, currency: Currency::USD),
+                            name: 'Product YW',
+                            amount: new Amount(value: 25.00001, currency: Currency::USD),
                             features: [new Feature(color: Color::BLACK)],
                             stockBatch: new ArrayIterator([3, 6, 9, 12])
                         )
                     ],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2024-01-01 00:00:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '2020-01-01 00:00:00',
+                        $spTimeZone
+                    )
                 ),
                 new Order(
-                    id: 10000001,
+                    id: 40000,
                     products: [
                         new Product(
                             name: 'Product X',
-                            amount: new Amount(value: 6066.55, currency: Currency::BRL),
+                            amount: new Amount(value: 2020.00, currency: Currency::BRL),
                             features: [new Feature(color: Color::RED)],
                             stockBatch: new ArrayIterator([45000])
                         ),
                         new Product(
                             name: 'Product Y',
-                            amount: new Amount(value: 678.36, currency: Currency::BRL),
+                            amount: new Amount(value: 123.321, currency: Currency::BRL),
                             features: [new Feature(color: Color::BLACK)],
                             stockBatch: new ArrayIterator([3, 6, 9, 12])
                         )
                     ],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2024-01-01 00:00:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '2020-01-01 00:00:00',
+                        $nyTimeZone
+                    )
                 )
             ])
         );
@@ -183,25 +212,28 @@ final class IterableSerializerTest extends TestCase
         return [
             'Customer with no orders'       => [
                 'iterable' => [$customerWithNoOrders],
-                'expected' => '{"id":"311dbf69-610e-41ef-b435-cf5654776bc5","orders":[]}'
+                'expected' => '{"id":"b2e82fe8-47b6-4b0e-ab6d-ad0e32089a0d","orders":[]}'
             ],
             'Customer with single order'    => [
                 'iterable' => [$customerWithSingleOrder],
-                'expected' => '{"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","orders":[{"id":20000000,"products":[{"name":"Product Z","amount":{"value":299.99,"currency":"USD"},"features":[{"color":"WHITE"}],"stockBatch":[100]}],"createdAt":"2020-01-01T00:00:00-03:00"}]}'
+                'expected' => '{"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","orders":[{"id":157,"products":[{"name":"Product XPTO","amount":{"value":8000.01,"currency":"BRL"},"features":[],"stockBatch":[123,1230]}],"createdAt":"2020-01-01T00:00:00-03:00"}]}'
             ],
             'Customer with mixed orders'    => [
                 'iterable' => [$customerWithMixedOrders],
-                'expected' => '{"id":"56789abc-5678-5678-5678-56789abcdef0","orders":[{"id":30000000,"products":[{"name":"Product A","amount":{"value":50,"currency":"BRL"},"features":[],"stockBatch":[]}],"createdAt":"1997-01-01 01:15:00"},{"id":30000001,"products":[{"name":"Product B","amount":{"value":150.75,"currency":"EUR"},"features":[{"color":"RED"}],"stockBatch":[5]}],"createdAt":"1997-01-01 20:00:00"}]}'
+                'expected' => '{"id":"ecdad865-9289-4ffc-8a3f-7ebb953c9032","orders":[{"id":123456789,"products":[{"name":"Product B","amount":{"value":50.05,"currency":"BRL"},"features":[],"stockBatch":[]}],"createdAt":"1997-01-01 01:15:00"},{"id":666,"products":[{"name":"Product SSS+","amount":{"value":150.99,"currency":"EUR"},"features":[{"color":"RED"}],"stockBatch":[5,20]}],"createdAt":"1997-01-01T01:15:00-05:00"},{"id":30000002,"products":[{"name":"Product C","amount":{"value":99.99,"currency":"USD"},"features":[],"stockBatch":[10]}],"createdAt":"1997-01-01T02:30:00-02:00"}]}'
             ],
             'Customer with multiple orders' => [
                 'iterable' => [$customerWithMultipleOrders],
-                'expected' => '{"id":"88ecb5f8-ef13-4026-a002-9baad15f7a26","orders":[{"id":10000000,"products":[{"name":"Product X","amount":{"value":1099.99,"currency":"USD"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product Y","amount":{"value":123.0005,"currency":"USD"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2024-01-01T00:00:00-03:00"},{"id":10000001,"products":[{"name":"Product X","amount":{"value":6066.55,"currency":"BRL"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product Y","amount":{"value":678.36,"currency":"BRL"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2024-01-01T00:00:00-03:00"}]}'
+                'expected' => '{"id":"88ecb5f8-ef13-4026-a002-9baad15f7a26","orders":[{"id":9223372036854775807,"products":[{"name":"Product XZ","amount":{"value":662,"currency":"USD"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product YW","amount":{"value":25.00001,"currency":"USD"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2020-01-01T00:00:00-03:00"},{"id":40000,"products":[{"name":"Product X","amount":{"value":2020,"currency":"BRL"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product Y","amount":{"value":123.321,"currency":"BRL"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2020-01-01T00:00:00-05:00"}]}'
             ]
         ];
     }
 
     public static function toArrayDataProvider(): array
     {
+        $spTimeZone = new DateTimeZone('America/Sao_Paulo');
+        $nyTimeZone = new DateTimeZone('America/New_York');
+
         $product = new Product(
             name: 'Product Z',
             amount: new Amount(value: 299.99, currency: Currency::USD),
@@ -220,7 +252,11 @@ final class IterableSerializerTest extends TestCase
                 new Order(
                     id: 20000000,
                     products: [$product],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '2020-01-01 00:00:00',
+                        $spTimeZone
+                    )
                 )
             ])
         );
@@ -240,7 +276,8 @@ final class IterableSerializerTest extends TestCase
                     ],
                     createdAt: DateTimeImmutable::createFromFormat(
                         DateTimeInterface::ISO8601_EXPANDED,
-                        '1997-01-01T01:15:00+00:00'
+                        '1997-01-01T01:15:00+00:00',
+                        $spTimeZone
                     )
                 ),
                 new Order(
@@ -253,7 +290,11 @@ final class IterableSerializerTest extends TestCase
                             stockBatch: new ArrayIterator([5])
                         )
                     ],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '1997-01-01 01:15:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '1997-01-01 01:15:00',
+                        $nyTimeZone
+                    )
                 ),
                 new Order(
                     id: 30000002,
@@ -265,7 +306,11 @@ final class IterableSerializerTest extends TestCase
                             stockBatch: new ArrayIterator([10])
                         )
                     ],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '1997-01-01 02:30:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '1997-01-01 02:30:00',
+                        $spTimeZone
+                    )
                 )
             ])
         );
@@ -289,7 +334,11 @@ final class IterableSerializerTest extends TestCase
                             stockBatch: new ArrayIterator([3, 6, 9, 12])
                         )
                     ],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '2020-01-01 00:00:00',
+                        $spTimeZone
+                    )
                 ),
                 new Order(
                     id: 10000001,
@@ -307,7 +356,11 @@ final class IterableSerializerTest extends TestCase
                             stockBatch: new ArrayIterator([3, 6, 9, 12])
                         )
                     ],
-                    createdAt: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00')
+                    createdAt: DateTimeImmutable::createFromFormat(
+                        'Y-m-d H:i:s',
+                        '2020-01-01 00:00:00',
+                        $nyTimeZone
+                    )
                 )
             ])
         );
@@ -386,7 +439,7 @@ final class IterableSerializerTest extends TestCase
                                         'stockBatch' => [5]
                                     ]
                                 ],
-                                'createdAt' => '1997-01-01T01:15:00-02:00'
+                                'createdAt' => '1997-01-01T01:15:00-05:00'
                             ],
                             [
                                 'id'        => 30000002,
@@ -444,7 +497,7 @@ final class IterableSerializerTest extends TestCase
                                         'stockBatch' => [3, 6, 9, 12]
                                     ]
                                 ],
-                                'createdAt' => '2020-01-01T00:00:00-03:00'
+                                'createdAt' => '2020-01-01T00:00:00-05:00'
                             ]
                         ]
                     ]
