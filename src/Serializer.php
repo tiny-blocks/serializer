@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace TinyBlocks\Serializer;
 
+/**
+ * Provides methods for serializing objects to JSON and array formats.
+ *
+ * @template Key of array-key
+ * @template Value of mixed
+ */
 interface Serializer
 {
     /**
-     * Define if keys should be preserved in the array.
-     */
-    public const PRESERVE_KEYS = true;
-
-    /**
-     * Returns object representation in JSON format.
+     * Returns the object representation in JSON format.
      *
-     * @return string
+     * @return string The JSON representation of the object.
      */
     public function toJson(): string;
 
     /**
-     * Return object representation in array format.
+     * Converts the object to an array representation.
      *
-     * @param bool $shouldPreserveKeys Whether to preserve keys in the array.
-     * @return array
+     * @param SerializeKeys $serializeKeys Optional serialization configuration.
+     * @return array<Key, Value> The array representation of the object.
      */
-    public function toArray(bool $shouldPreserveKeys = self::PRESERVE_KEYS): array;
+    public function toArray(SerializeKeys $serializeKeys = SerializeKeys::PRESERVE): array;
 }
