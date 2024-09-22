@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace TinyBlocks\Serializer;
 
-use TinyBlocks\Serializer\Internal\Serializable;
+use TinyBlocks\Serializer\Internal\ArraySerializer;
+use TinyBlocks\Serializer\Internal\JsonSerializer;
 
 trait SerializerAdapter
 {
     public function toJson(): string
     {
-        return json_encode($this->toArray(), JSON_PRESERVE_ZERO_FRACTION);
+        return (new JsonSerializer())->serialize(data: $this->toArray());
     }
 
-    public function toArray(bool $shouldPreserveKeys = self::PRESERVE_KEYS): array
+    public function toArray(SerializeKeys $serializeKeys = SerializeKeys::PRESERVE): array
     {
-        $values = get_object_vars($this);
-        $serializable = new Serializable(iterable: $values, shouldPreserveKeys: $shouldPreserveKeys);
+        $arraySerializer = new ArraySerializer(iterable: get_object_vars($this));
 
-        return $serializable->serializeToArray();
+        return $arraySerializer->toArray(serializeKeys: $serializeKeys);
     }
 }

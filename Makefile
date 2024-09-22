@@ -1,6 +1,6 @@
 DOCKER_RUN = docker run --rm -it --net=host -v ${PWD}:/app -w /app gustavofreze/php:8.2
 
-.PHONY: configure test test-file test-no-coverage review show-reports clean
+.PHONY: configure test test-file test-no-coverage review fix-style show-reports clean
 
 configure:
 	@${DOCKER_RUN} composer update --optimize-autoloader
@@ -16,6 +16,9 @@ test-no-coverage:
 
 review:
 	@${DOCKER_RUN} composer review
+
+fix-style:
+	@${DOCKER_RUN} composer fix-style
 
 show-reports:
 	@sensible-browser report/coverage/coverage-html/index.html report/coverage/mutation-report.html

@@ -50,6 +50,7 @@
         "phpcs": "phpcs --standard=PSR12 --extensions=php ./src",
         "phpmd": "phpmd ./src text phpmd.xml --suffixes php --ignore-violations-on-exit",
         "test": "phpunit --log-junit=report/coverage/junit.xml --coverage-xml=report/coverage/coverage-xml --coverage-html=report/coverage/coverage-html tests",
+        "fix-style": "phpcbf ./src --extensions=php",
         "test-mutation": "infection --only-covered --logger-html=report/coverage/mutation-report.html --coverage=report/coverage --min-msi=100 --min-covered-msi=100 --threads=4",
         "test-no-coverage": "phpunit --no-coverage",
         "test-mutation-no-coverage": "infection --only-covered --min-msi=100 --threads=4",
