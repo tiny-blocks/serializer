@@ -13,16 +13,19 @@ namespace TinyBlocks\Serializer;
 interface Serializer
 {
     /**
-     * Returns the object representation in JSON format.
+     * Serializes the object to a JSON string.
      *
-     * @return string The JSON representation of the object.
+     * @param SerializeKeys $serializeKeys Optional parameter to define how keys
+     *                                     should be serialized (default: PRESERVE).
+     * @return string The JSON string representing the object.
      */
-    public function toJson(): string;
+    public function toJson(SerializeKeys $serializeKeys = SerializeKeys::PRESERVE): string;
 
     /**
-     * Converts the object to an array representation.
+     * Converts the object to an array.
      *
-     * @param SerializeKeys $serializeKeys Optional serialization configuration.
+     * @param SerializeKeys $serializeKeys Optional parameter to define how keys
+     *                                     should be serialized (default: PRESERVE).
      * @return array<Key, Value> The array representation of the object.
      */
     public function toArray(SerializeKeys $serializeKeys = SerializeKeys::PRESERVE): array;
