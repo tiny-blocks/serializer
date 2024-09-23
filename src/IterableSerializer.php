@@ -7,6 +7,13 @@ namespace TinyBlocks\Serializer;
 use TinyBlocks\Serializer\Internal\ArraySerializer;
 use TinyBlocks\Serializer\Internal\JsonSerializer;
 
+/**
+ * A serializer for iterable objects that supports JSON and array formats.
+ *
+ * @template Key of array-key
+ * @template Value of mixed
+ * @implements Serializer<Key, Value>
+ */
 final readonly class IterableSerializer implements Serializer
 {
     private JsonSerializer $jsonSerializer;
@@ -18,9 +25,9 @@ final readonly class IterableSerializer implements Serializer
         $this->arraySerializer = new ArraySerializer(iterable: $iterable);
     }
 
-    public function toJson(): string
+    public function toJson(SerializeKeys $serializeKeys = SerializeKeys::PRESERVE): string
     {
-        $data = $this->arraySerializer->toArray();
+        $data = $this->arraySerializer->toArray(serializeKeys: $serializeKeys);
 
         return $this->jsonSerializer->serialize(data: $data);
     }
