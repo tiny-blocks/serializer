@@ -9,8 +9,14 @@ final readonly class JsonSerializer
     public function serialize(array $data): string
     {
         $isSingleItem = count($data) === 1;
-        $dataToSerialize = $isSingleItem ? $data[0] : $data;
+        $dataToSerialize = $isSingleItem ? ($data[0] ?? null) : $data;
 
-        return json_encode($dataToSerialize, JSON_PRESERVE_ZERO_FRACTION);
+        $json = json_encode($dataToSerialize, JSON_PRESERVE_ZERO_FRACTION);
+
+        if (!is_string($json) || $json === 'null') {
+            return $isSingleItem ? '{}' : '[]';
+        }
+
+        return $json;
     }
 }
