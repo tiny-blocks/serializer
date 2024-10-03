@@ -16,7 +16,7 @@ final readonly class ArraySerializer
     public function toArray(SerializeKeys $serializeKeys = SerializeKeys::PRESERVE): array
     {
         $mapper = new Mapper(serializeKeys: $serializeKeys);
-        $shouldPreserveKeys = $serializeKeys && $serializeKeys->shouldPreserveKeys();
+        $shouldPreserveKeys = $serializeKeys->shouldPreserveKeys();
 
         $elements = is_array($this->iterable)
             ? $this->iterable

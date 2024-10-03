@@ -10,7 +10,7 @@ final class Mapper
 {
     private ValueMapper $valueMapper;
 
-    public function __construct(?SerializeKeys $serializeKeys)
+    public function __construct(SerializeKeys $serializeKeys)
     {
         $this->valueMapper = new ValueMapper(serializeKeys: $serializeKeys);
     }

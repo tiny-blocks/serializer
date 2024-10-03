@@ -73,6 +73,18 @@ final class IterableSerializerTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    public function testSerializeMultipleInvalidItemsReturnsEmptyJsonArray(): void
+    {
+        /** @Given multiple invalid items (e.g., functions that cannot be serialized) */
+        $serializer = new IterableSerializer(iterable: [fn(): null => null, fn(): null => null]);
+
+        /** @When attempting to serialize the invalid items */
+        $actual = $serializer->toJson();
+
+        /** @Then the output should be an empty JSON array */
+        self::assertSame('[[],[]]', $actual);
+    }
+
     public static function toJsonDataProvider(): array
     {
         $spTimeZone = new DateTimeZone('America/Sao_Paulo');
