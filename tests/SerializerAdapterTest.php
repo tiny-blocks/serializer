@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use TinyBlocks\Serializer\Models\Serializable\Address;
 use TinyBlocks\Serializer\Models\Serializable\Addresses;
 use TinyBlocks\Serializer\Models\Serializable\Country;
+use TinyBlocks\Serializer\Models\Serializable\Service;
 use TinyBlocks\Serializer\Models\Serializable\Shipping;
 use TinyBlocks\Serializer\Models\Serializable\State;
 
@@ -32,6 +33,18 @@ final class SerializerAdapterTest extends TestCase
 
         /** @Then the result should match the expected JSON string */
         self::assertJsonStringEqualsJsonString($expected, $actual);
+    }
+
+    public function testSerializeSingleInvalidItemReturnsEmptyJsonObject(): void
+    {
+        /** @Given a single invalid item (e.g., a function that cannot be serialized) */
+        $service = new Service(action: fn(): int => 0);
+
+        /** @When attempting to serialize the invalid item */
+        $actual = $service->toJson();
+
+        /** @Then the output should be an empty JSON object */
+        self::assertSame('{}', $actual);
     }
 
     public static function shippingDataProviderForArray(): array
