@@ -82,7 +82,7 @@ final class IterableSerializerTest extends TestCase
         $actual = $serializer->toJson();
 
         /** @Then the output should be an empty JSON array */
-        self::assertSame('[[],[]]', $actual);
+        self::assertSame('[]', $actual);
     }
 
     public static function toJsonDataProvider(): array
