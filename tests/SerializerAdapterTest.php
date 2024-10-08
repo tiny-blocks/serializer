@@ -45,10 +45,10 @@ final class SerializerAdapterTest extends TestCase
         $actual = $service->toJson();
 
         /** @Then the invalid item should be serialized as an empty array in the JSON output */
-        self::assertSame('{"action":[]}', $actual);
+        self::assertSame('[]', $actual);
     }
 
-    public static function dataProviderForToArray(): array
+    public static function dataProviderForToArray(): iterable
     {
         $shippingWithNoAddresses = new Shipping(id: 1, addresses: new Addresses());
         $shippingWithSingleAddress = new Shipping(
@@ -87,107 +87,109 @@ final class SerializerAdapterTest extends TestCase
             )
         );
 
-        return [
-            'Decimal object'                          => [
-                'object'   => new Decimal(value: 9.99),
-                'expected' => ['value' => 9.99]
-            ],
-            'Shipping object with no addresses'       => [
-                'object'   => $shippingWithNoAddresses,
-                'expected' => ['id' => 1, 'addresses' => []]
-            ],
-            'Shipping object with a single address'   => [
-                'object'   => $shippingWithSingleAddress,
-                'expected' => [
-                    'id'        => 2,
-                    'addresses' => [
-                        [
-                            'city'    => 'São Paulo',
-                            'state'   => State::SP->name,
-                            'street'  => 'Avenida Paulista',
-                            'number'  => 100,
-                            'country' => Country::BRAZIL->value
-                        ]
+        yield 'Decimal object' => [
+            'object'   => new Decimal(value: 9.99),
+            'expected' => ['value' => 9.99]
+        ];
+
+        yield 'Shipping object with no addresses' => [
+            'object'   => $shippingWithNoAddresses,
+            'expected' => ['id' => 1, 'addresses' => []]
+        ];
+
+        yield 'Shipping object with a single address' => [
+            'object'   => $shippingWithSingleAddress,
+            'expected' => [
+                'id'        => 2,
+                'addresses' => [
+                    [
+                        'city'    => 'São Paulo',
+                        'state'   => State::SP->name,
+                        'street'  => 'Avenida Paulista',
+                        'number'  => 100,
+                        'country' => Country::BRAZIL->value
                     ]
                 ]
-            ],
-            'Shipping object with multiple addresses' => [
-                'object'   => $shippingWithMultipleAddresses,
-                'expected' => [
-                    'id'        => 100000,
-                    'addresses' => [
-                        [
-                            'city'    => 'New York',
-                            'state'   => State::NY->name,
-                            'street'  => '5th Avenue',
-                            'number'  => 1,
-                            'country' => Country::UNITED_STATES->value
-                        ],
-                        [
-                            'city'    => 'New York',
-                            'state'   => State::NY->name,
-                            'street'  => 'Broadway',
-                            'number'  => 42,
-                            'country' => Country::UNITED_STATES->value
-                        ]
+            ]
+        ];
+
+        yield 'Shipping object with multiple addresses' => [
+            'object'   => $shippingWithMultipleAddresses,
+            'expected' => [
+                'id'        => 100000,
+                'addresses' => [
+                    [
+                        'city'    => 'New York',
+                        'state'   => State::NY->name,
+                        'street'  => '5th Avenue',
+                        'number'  => 1,
+                        'country' => Country::UNITED_STATES->value
+                    ],
+                    [
+                        'city'    => 'New York',
+                        'state'   => State::NY->name,
+                        'street'  => 'Broadway',
+                        'number'  => 42,
+                        'country' => Country::UNITED_STATES->value
                     ]
                 ]
             ]
         ];
     }
 
-    public static function dataProviderForToJson(): array
+    public static function dataProviderForToJson(): iterable
     {
-        return [
-            'Decimal object'                          => [
-                'object'   => new Decimal(value: 9.99),
-                'expected' => '{"value":9.99}'
-            ],
-            'Shipping object with no addresses'       => [
-                'object'   => new Shipping(id: 1, addresses: new Addresses()),
-                'expected' => '{"id":1,"addresses":[]}'
-            ],
-            'Shipping object with a single address'   => [
-                'object'   => new Shipping(
-                    id: 2,
-                    addresses: new Addresses(
-                        elements: [
-                            new Address(
-                                city: 'São Paulo',
-                                state: State::SP,
-                                street: 'Avenida Paulista',
-                                number: 100,
-                                country: Country::BRAZIL
-                            )
-                        ]
-                    )
-                ),
-                'expected' => '{"id":2,"addresses":[{"city":"São Paulo","state":"SP","street":"Avenida Paulista","number":100,"country":"BR"}]}'
-            ],
-            'Shipping object with multiple addresses' => [
-                'object'   => new Shipping(
-                    id: 100000,
-                    addresses: new Addresses(
-                        elements: [
-                            new Address(
-                                city: 'New York',
-                                state: State::NY,
-                                street: '5th Avenue',
-                                number: 1,
-                                country: Country::UNITED_STATES
-                            ),
-                            new Address(
-                                city: 'New York',
-                                state: State::NY,
-                                street: 'Broadway',
-                                number: 42,
-                                country: Country::UNITED_STATES
-                            )
-                        ]
-                    )
-                ),
-                'expected' => '{"id":100000,"addresses":[{"city":"New York","state":"NY","street":"5th Avenue","number":1,"country":"US"},{"city":"New York","state":"NY","street":"Broadway","number":42,"country":"US"}]}'
-            ]
+        yield 'Decimal object' => [
+            'object'   => new Decimal(value: 9.99),
+            'expected' => '{"value":9.99}'
+        ];
+
+        yield 'Shipping object with no addresses' => [
+            'object'   => new Shipping(id: 1, addresses: new Addresses()),
+            'expected' => '{"id":1,"addresses":[]}'
+        ];
+
+        yield 'Shipping object with a single address' => [
+            'object'   => new Shipping(
+                id: 2,
+                addresses: new Addresses(
+                    elements: [
+                        new Address(
+                            city: 'São Paulo',
+                            state: State::SP,
+                            street: 'Avenida Paulista',
+                            number: 100,
+                            country: Country::BRAZIL
+                        )
+                    ]
+                )
+            ),
+            'expected' => '{"id":2,"addresses":[{"city":"São Paulo","state":"SP","street":"Avenida Paulista","number":100,"country":"BR"}]}'
+        ];
+
+        yield 'Shipping object with multiple addresses' => [
+            'object'   => new Shipping(
+                id: 100000,
+                addresses: new Addresses(
+                    elements: [
+                        new Address(
+                            city: 'New York',
+                            state: State::NY,
+                            street: '5th Avenue',
+                            number: 1,
+                            country: Country::UNITED_STATES
+                        ),
+                        new Address(
+                            city: 'New York',
+                            state: State::NY,
+                            street: 'Broadway',
+                            number: 42,
+                            country: Country::UNITED_STATES
+                        )
+                    ]
+                )
+            ),
+            'expected' => '{"id":100000,"addresses":[{"city":"New York","state":"NY","street":"5th Avenue","number":1,"country":"US"},{"city":"New York","state":"NY","street":"Broadway","number":42,"country":"US"}]}'
         ];
     }
 }
