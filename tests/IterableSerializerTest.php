@@ -85,7 +85,7 @@ final class IterableSerializerTest extends TestCase
         self::assertSame('[]', $actual);
     }
 
-    public static function toJsonDataProvider(): array
+    public static function toJsonDataProvider(): iterable
     {
         $spTimeZone = new DateTimeZone('America/Sao_Paulo');
         $nyTimeZone = new DateTimeZone('America/New_York');
@@ -221,27 +221,43 @@ final class IterableSerializerTest extends TestCase
             ])
         );
 
-        return [
-            'Customer with no orders'       => [
-                'iterable' => [$customerWithNoOrders],
-                'expected' => '{"id":"b2e82fe8-47b6-4b0e-ab6d-ad0e32089a0d","orders":[]}'
-            ],
-            'Customer with single order'    => [
-                'iterable' => [$customerWithSingleOrder],
-                'expected' => '{"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","orders":[{"id":157,"products":[{"name":"Product XPTO","amount":{"value":8000.01,"currency":"BRL"},"features":[],"stockBatch":[123,1230]}],"createdAt":"2020-01-01T00:00:00-03:00"}]}'
-            ],
-            'Customer with mixed orders'    => [
-                'iterable' => [$customerWithMixedOrders],
-                'expected' => '{"id":"ecdad865-9289-4ffc-8a3f-7ebb953c9032","orders":[{"id":123456789,"products":[{"name":"Product B","amount":{"value":50.05,"currency":"BRL"},"features":[],"stockBatch":[]}],"createdAt":"1997-01-01 01:15:00"},{"id":666,"products":[{"name":"Product SSS+","amount":{"value":150.99,"currency":"EUR"},"features":[{"color":"RED"}],"stockBatch":[5,20]}],"createdAt":"1997-01-01T01:15:00-05:00"},{"id":30000002,"products":[{"name":"Product C","amount":{"value":99.99,"currency":"USD"},"features":[],"stockBatch":[10]}],"createdAt":"1997-01-01T02:30:00-02:00"}]}'
-            ],
-            'Customer with multiple orders' => [
-                'iterable' => [$customerWithMultipleOrders],
-                'expected' => '{"id":"88ecb5f8-ef13-4026-a002-9baad15f7a26","orders":[{"id":9223372036854775807,"products":[{"name":"Product XZ","amount":{"value":662,"currency":"USD"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product YW","amount":{"value":25.00001,"currency":"USD"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2020-01-01T00:00:00-03:00"},{"id":40000,"products":[{"name":"Product X","amount":{"value":2020,"currency":"BRL"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product Y","amount":{"value":123.321,"currency":"BRL"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2020-01-01T00:00:00-05:00"}]}'
-            ]
+        yield 'Mixed types' => [
+            'iterable' => ['iPhone', 42, true, $customerWithNoOrders],
+            'expected' => '["iPhone",42,true,{"id":"b2e82fe8-47b6-4b0e-ab6d-ad0e32089a0d","orders":[]}]'
+        ];
+
+        yield 'Currency unit enums' => [
+            'iterable' => [Color::RED, Color::BLACK, Color::WHITE],
+            'expected' => '["RED","BLACK","WHITE"]'
+        ];
+
+        yield 'Currency backed enums' => [
+            'iterable' => [Currency::USD, Currency::BRL],
+            'expected' => '["USD","BRL"]'
+        ];
+
+        yield 'Customer with no orders' => [
+            'iterable' => [$customerWithNoOrders],
+            'expected' => '{"id":"b2e82fe8-47b6-4b0e-ab6d-ad0e32089a0d","orders":[]}'
+        ];
+
+        yield 'Customer with single order' => [
+            'iterable' => [$customerWithSingleOrder],
+            'expected' => '{"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","orders":[{"id":157,"products":[{"name":"Product XPTO","amount":{"value":8000.01,"currency":"BRL"},"features":[],"stockBatch":[123,1230]}],"createdAt":"2020-01-01T00:00:00-03:00"}]}'
+        ];
+
+        yield 'Customer with mixed orders' => [
+            'iterable' => [$customerWithMixedOrders],
+            'expected' => '{"id":"ecdad865-9289-4ffc-8a3f-7ebb953c9032","orders":[{"id":123456789,"products":[{"name":"Product B","amount":{"value":50.05,"currency":"BRL"},"features":[],"stockBatch":[]}],"createdAt":"1997-01-01 01:15:00"},{"id":666,"products":[{"name":"Product SSS+","amount":{"value":150.99,"currency":"EUR"},"features":[{"color":"RED"}],"stockBatch":[5,20]}],"createdAt":"1997-01-01T01:15:00-05:00"},{"id":30000002,"products":[{"name":"Product C","amount":{"value":99.99,"currency":"USD"},"features":[],"stockBatch":[10]}],"createdAt":"1997-01-01T02:30:00-02:00"}]}'
+        ];
+
+        yield 'Customer with multiple orders' => [
+            'iterable' => [$customerWithMultipleOrders],
+            'expected' => '{"id":"88ecb5f8-ef13-4026-a002-9baad15f7a26","orders":[{"id":9223372036854775807,"products":[{"name":"Product XZ","amount":{"value":662,"currency":"USD"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product YW","amount":{"value":25.00001,"currency":"USD"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2020-01-01T00:00:00-03:00"},{"id":40000,"products":[{"name":"Product X","amount":{"value":2020,"currency":"BRL"},"features":[{"color":"RED"}],"stockBatch":[45000]},{"name":"Product Y","amount":{"value":123.321,"currency":"BRL"},"features":[{"color":"BLACK"}],"stockBatch":[3,6,9,12]}],"createdAt":"2020-01-01T00:00:00-05:00"}]}'
         ];
     }
 
-    public static function toArrayDataProvider(): array
+    public static function toArrayDataProvider(): iterable
     {
         $spTimeZone = new DateTimeZone('America/Sao_Paulo');
         $nyTimeZone = new DateTimeZone('America/New_York');
@@ -377,140 +393,162 @@ final class IterableSerializerTest extends TestCase
             ])
         );
 
-        return [
-            'Single product'                => [
-                'iterable' => [$product],
-                'expected' => [
-                    [
-                        'name'       => 'Product Z',
-                        'amount'     => [
-                            'value'    => 299.99,
-                            'currency' => Currency::USD->value
+        yield 'Mixed types' => [
+            'iterable' => ['iPhone', 42, true, $customerWithNoOrders],
+            'expected' => [
+                'iPhone',
+                42,
+                true,
+                ['id' => $customerWithNoOrders->getId(), 'orders' => []]
+            ]
+        ];
+
+        yield 'Single product' => [
+            'iterable' => [$product],
+            'expected' => [
+                [
+                    'name'       => 'Product Z',
+                    'amount'     => [
+                        'value'    => 299.99,
+                        'currency' => Currency::USD->value
+                    ],
+                    'features'   => [],
+                    'stockBatch' => [100]
+                ]
+            ]
+        ];
+
+        yield 'Currency unit enums' => [
+            'iterable' => [Color::RED, Color::BLACK, Color::WHITE],
+            'expected' => ["RED", "BLACK", "WHITE"]
+        ];
+
+        yield 'Currency backed enums' => [
+            'iterable' => [Currency::USD, Currency::BRL],
+            'expected' => ["USD", "BRL"]
+        ];
+
+        yield 'Customer with no orders' => [
+            'iterable' => [$customerWithNoOrders],
+            'expected' => [
+                [
+                    'id'     => '12345678-1234-1234-1234-123456789abc',
+                    'orders' => []
+                ]
+            ]
+        ];
+
+        yield 'Customer with single order' => [
+            'iterable' => [$customerWithSingleOrder],
+            'expected' => [
+                [
+                    'id'     => 'abcdefab-abcd-abcd-abcd-abcdefabcdef',
+                    'orders' => [
+                        [
+                            'id'        => 20000000,
+                            'products'  => [
+                                [
+                                    'name'       => 'Product Z',
+                                    'amount'     => ['value' => 299.99, 'currency' => Currency::USD->value],
+                                    'features'   => [],
+                                    'stockBatch' => [100]
+                                ]
+                            ],
+                            'createdAt' => '2020-01-01T00:00:00-03:00'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        yield 'Customer with mixed orders' => [
+            'iterable' => [$customerWithMixedOrders],
+            'expected' => [
+                [
+                    'id'     => '56789abc-5678-5678-5678-56789abcdef0',
+                    'orders' => [
+                        [
+                            'id'        => 30000000,
+                            'products'  => [
+                                [
+                                    'name'       => 'Product A',
+                                    'amount'     => ['value' => 50.0, 'currency' => Currency::BRL->value],
+                                    'features'   => [],
+                                    'stockBatch' => []
+                                ]
+                            ],
+                            'createdAt' => '1997-01-01 01:15:00'
                         ],
-                        'features'   => [],
-                        'stockBatch' => [100]
-                    ]
-                ]
-            ],
-            'Customer with no orders'       => [
-                'iterable' => [$customerWithNoOrders],
-                'expected' => [
-                    [
-                        'id'     => '12345678-1234-1234-1234-123456789abc',
-                        'orders' => []
-                    ]
-                ]
-            ],
-            'Customer with single order'    => [
-                'iterable' => [$customerWithSingleOrder],
-                'expected' => [
-                    [
-                        'id'     => 'abcdefab-abcd-abcd-abcd-abcdefabcdef',
-                        'orders' => [
-                            [
-                                'id'        => 20000000,
-                                'products'  => [
-                                    [
-                                        'name'       => 'Product Z',
-                                        'amount'     => ['value' => 299.99, 'currency' => Currency::USD->value],
-                                        'features'   => [],
-                                        'stockBatch' => [100]
-                                    ]
-                                ],
-                                'createdAt' => '2020-01-01T00:00:00-03:00'
-                            ]
+                        [
+                            'id'        => 30000001,
+                            'products'  => [
+                                [
+                                    'name'       => 'Product B',
+                                    'amount'     => ['value' => 150.75, 'currency' => Currency::EUR->value],
+                                    'features'   => [['color' => Color::RED->name]],
+                                    'stockBatch' => [5]
+                                ]
+                            ],
+                            'createdAt' => '1997-01-01T01:15:00-05:00'
+                        ],
+                        [
+                            'id'        => 30000002,
+                            'products'  => [
+                                [
+                                    'name'       => 'Product C',
+                                    'amount'     => ['value' => 99.99, 'currency' => Currency::USD->value],
+                                    'features'   => [],
+                                    'stockBatch' => [10]
+                                ]
+                            ],
+                            'createdAt' => '1997-01-01T02:30:00-02:00'
                         ]
                     ]
                 ]
-            ],
-            'Customer with mixed orders'    => [
-                'iterable' => [$customerWithMixedOrders],
-                'expected' => [
-                    [
-                        'id'     => '56789abc-5678-5678-5678-56789abcdef0',
-                        'orders' => [
-                            [
-                                'id'        => 30000000,
-                                'products'  => [
-                                    [
-                                        'name'       => 'Product A',
-                                        'amount'     => ['value' => 50.0, 'currency' => Currency::BRL->value],
-                                        'features'   => [],
-                                        'stockBatch' => []
-                                    ]
+            ]
+        ];
+
+        yield 'Customer with multiple orders' => [
+            'iterable' => [$customerWithMultipleOrders],
+            'expected' => [
+                [
+                    'id'     => '88ecb5f8-ef13-4026-a002-9baad15f7a26',
+                    'orders' => [
+                        [
+                            'id'        => 10000000,
+                            'products'  => [
+                                [
+                                    'name'       => 'Product X',
+                                    'amount'     => ['value' => 1099.99, 'currency' => Currency::USD->value],
+                                    'features'   => [['color' => Color::RED->name]],
+                                    'stockBatch' => [45000]
                                 ],
-                                'createdAt' => '1997-01-01 01:15:00'
+                                [
+                                    'name'       => 'Product Y',
+                                    'amount'     => ['value' => 123.0005, 'currency' => Currency::USD->value],
+                                    'features'   => [['color' => Color::BLACK->name]],
+                                    'stockBatch' => [3, 6, 9, 12]
+                                ]
                             ],
-                            [
-                                'id'        => 30000001,
-                                'products'  => [
-                                    [
-                                        'name'       => 'Product B',
-                                        'amount'     => ['value' => 150.75, 'currency' => Currency::EUR->value],
-                                        'features'   => [['color' => Color::RED->name]],
-                                        'stockBatch' => [5]
-                                    ]
+                            'createdAt' => '2020-01-01T00:00:00-03:00'
+                        ],
+                        [
+                            'id'        => 10000001,
+                            'products'  => [
+                                [
+                                    'name'       => 'Product X',
+                                    'amount'     => ['value' => 6066.55, 'currency' => Currency::BRL->value],
+                                    'features'   => [['color' => Color::RED->name]],
+                                    'stockBatch' => [45000]
                                 ],
-                                'createdAt' => '1997-01-01T01:15:00-05:00'
+                                [
+                                    'name'       => 'Product Y',
+                                    'amount'     => ['value' => 678.36, 'currency' => Currency::BRL->value],
+                                    'features'   => [['color' => Color::BLACK->name]],
+                                    'stockBatch' => [3, 6, 9, 12]
+                                ]
                             ],
-                            [
-                                'id'        => 30000002,
-                                'products'  => [
-                                    [
-                                        'name'       => 'Product C',
-                                        'amount'     => ['value' => 99.99, 'currency' => Currency::USD->value],
-                                        'features'   => [],
-                                        'stockBatch' => [10]
-                                    ]
-                                ],
-                                'createdAt' => '1997-01-01T02:30:00-02:00'
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            'Customer with multiple orders' => [
-                'iterable' => [$customerWithMultipleOrders],
-                'expected' => [
-                    [
-                        'id'     => '88ecb5f8-ef13-4026-a002-9baad15f7a26',
-                        'orders' => [
-                            [
-                                'id'        => 10000000,
-                                'products'  => [
-                                    [
-                                        'name'       => 'Product X',
-                                        'amount'     => ['value' => 1099.99, 'currency' => Currency::USD->value],
-                                        'features'   => [['color' => Color::RED->name]],
-                                        'stockBatch' => [45000]
-                                    ],
-                                    [
-                                        'name'       => 'Product Y',
-                                        'amount'     => ['value' => 123.0005, 'currency' => Currency::USD->value],
-                                        'features'   => [['color' => Color::BLACK->name]],
-                                        'stockBatch' => [3, 6, 9, 12]
-                                    ]
-                                ],
-                                'createdAt' => '2020-01-01T00:00:00-03:00'
-                            ],
-                            [
-                                'id'        => 10000001,
-                                'products'  => [
-                                    [
-                                        'name'       => 'Product X',
-                                        'amount'     => ['value' => 6066.55, 'currency' => Currency::BRL->value],
-                                        'features'   => [['color' => Color::RED->name]],
-                                        'stockBatch' => [45000]
-                                    ],
-                                    [
-                                        'name'       => 'Product Y',
-                                        'amount'     => ['value' => 678.36, 'currency' => Currency::BRL->value],
-                                        'features'   => [['color' => Color::BLACK->name]],
-                                        'stockBatch' => [3, 6, 9, 12]
-                                    ]
-                                ],
-                                'createdAt' => '2020-01-01T00:00:00-05:00'
-                            ]
+                            'createdAt' => '2020-01-01T00:00:00-05:00'
                         ]
                     ]
                 ]
@@ -518,63 +556,69 @@ final class IterableSerializerTest extends TestCase
         ];
     }
 
-    public static function discardKeysDataProvider(): array
+    public static function discardKeysDataProvider(): iterable
     {
-        return [
-            'Mixed types'                  => [
-                'iterable' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true],
-                'expected' => ['apple', 100, 12.34, true]
-            ],
-            'Array of floats'              => [
-                'iterable' => ['key1' => 1.5, 'key2' => 2.5, 'key3' => 3.5],
-                'expected' => [1.5, 2.5, 3.5]
-            ],
-            'Array of strings'             => [
-                'iterable' => ['key1' => 'apple', 'key2' => 'banana', 'key3' => 'cherry'],
-                'expected' => ['apple', 'banana', 'cherry']
-            ],
-            'Array of integers'            => [
-                'iterable' => ['key1' => 10, 'key2' => 20, 'key3' => 30],
-                'expected' => [10, 20, 30]
-            ],
-            'Array of booleans'            => [
-                'iterable' => ['key1' => true, 'key2' => false, 'key3' => true],
-                'expected' => [true, false, true]
-            ],
-            'ArrayIterator of mixed types' => [
-                'iterable' => new ArrayIterator(['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]),
-                'expected' => ['apple', 100, 12.34, true]
-            ]
+        yield 'Mixed types' => [
+            'iterable' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true],
+            'expected' => ['apple', 100, 12.34, true]
+        ];
+
+        yield 'Array of floats' => [
+            'iterable' => ['key1' => 1.5, 'key2' => 2.5, 'key3' => 3.5],
+            'expected' => [1.5, 2.5, 3.5]
+        ];
+
+        yield 'Array of strings' => [
+            'iterable' => ['key1' => 'apple', 'key2' => 'banana', 'key3' => 'cherry'],
+            'expected' => ['apple', 'banana', 'cherry']
+        ];
+
+        yield 'Array of integers' => [
+            'iterable' => ['key1' => 10, 'key2' => 20, 'key3' => 30],
+            'expected' => [10, 20, 30]
+        ];
+
+        yield 'Array of booleans' => [
+            'iterable' => ['key1' => true, 'key2' => false, 'key3' => true],
+            'expected' => [true, false, true]
+        ];
+
+        yield 'ArrayIterator of mixed types' => [
+            'iterable' => new ArrayIterator(['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]),
+            'expected' => ['apple', 100, 12.34, true]
         ];
     }
 
-    public static function preserveKeysDataProvider(): array
+    public static function preserveKeysDataProvider(): iterable
     {
-        return [
-            'Mixed types'                  => [
-                'iterable' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true],
-                'expected' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]
-            ],
-            'Array of floats'              => [
-                'iterable' => ['key1' => 1.5, 'key2' => 2.5, 'key3' => 3.5],
-                'expected' => ['key1' => 1.5, 'key2' => 2.5, 'key3' => 3.5]
-            ],
-            'Array of strings'             => [
-                'iterable' => ['key1' => 'apple', 'key2' => 'banana', 'key3' => 'cherry'],
-                'expected' => ['key1' => 'apple', 'key2' => 'banana', 'key3' => 'cherry']
-            ],
-            'Array of integers'            => [
-                'iterable' => ['key1' => 10, 'key2' => 20, 'key3' => 30],
-                'expected' => ['key1' => 10, 'key2' => 20, 'key3' => 30]
-            ],
-            'Array of booleans'            => [
-                'iterable' => ['key1' => true, 'key2' => false, 'key3' => true],
-                'expected' => ['key1' => true, 'key2' => false, 'key3' => true]
-            ],
-            'ArrayIterator of mixed types' => [
-                'iterable' => new ArrayIterator(['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]),
-                'expected' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]
-            ]
+        yield 'Mixed types' => [
+            'iterable' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true],
+            'expected' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]
+        ];
+
+        yield 'Array of floats' => [
+            'iterable' => ['key1' => 1.5, 'key2' => 2.5, 'key3' => 3.5],
+            'expected' => ['key1' => 1.5, 'key2' => 2.5, 'key3' => 3.5]
+        ];
+
+        yield 'Array of strings' => [
+            'iterable' => ['key1' => 'apple', 'key2' => 'banana', 'key3' => 'cherry'],
+            'expected' => ['key1' => 'apple', 'key2' => 'banana', 'key3' => 'cherry']
+        ];
+
+        yield 'Array of integers' => [
+            'iterable' => ['key1' => 10, 'key2' => 20, 'key3' => 30],
+            'expected' => ['key1' => 10, 'key2' => 20, 'key3' => 30]
+        ];
+
+        yield 'Array of booleans' => [
+            'iterable' => ['key1' => true, 'key2' => false, 'key3' => true],
+            'expected' => ['key1' => true, 'key2' => false, 'key3' => true]
+        ];
+
+        yield 'ArrayIterator of mixed types' => [
+            'iterable' => new ArrayIterator(['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]),
+            'expected' => ['key1' => 'apple', 'key2' => 100, 'key3' => 12.34, 'key4' => true]
         ];
     }
 }

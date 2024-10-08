@@ -8,11 +8,24 @@ final readonly class JsonSerializer
 {
     public function serialize(array $data): string
     {
-        $isSingleItem = static fn(array $data): bool => array_keys($data) !== range(0, count($data) - 1);
-        $dataToSerialize = $isSingleItem($data) ? $data : ($data[0] ?? null);
+        $isAllEmpty = static function (array $items): bool {
+            return array_reduce($items, static fn(bool $carry, mixed $item): bool => $carry && empty($item), true);
+        };
 
-        $json = json_encode($dataToSerialize, JSON_PRESERVE_ZERO_FRACTION);
+        $serializeToJson = static fn(mixed $value): string => is_string(
+            $json = json_encode($value, JSON_PRESERVE_ZERO_FRACTION)
+        ) ? $json : '[]';
 
-        return is_string($json) ? $json : '{}';
+        if ($isAllEmpty($data)) {
+            return '[]';
+        }
+
+        $isSerializable = static fn(mixed $item): bool => !is_scalar($item);
+
+        if (count($data) === 1 && isset($data[0]) && $isSerializable($data[0])) {
+            return $serializeToJson($data[0]);
+        }
+
+        return $serializeToJson($data);
     }
 }
