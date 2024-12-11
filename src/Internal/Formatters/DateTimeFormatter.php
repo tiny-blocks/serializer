@@ -7,7 +7,7 @@ namespace TinyBlocks\Serializer\Internal\Formatters;
 use DateTimeImmutable;
 use DateTimeInterface;
 
-final class DateTimeFormatter
+final readonly class DateTimeFormatter
 {
     public function format(DateTimeImmutable $date): string
     {
