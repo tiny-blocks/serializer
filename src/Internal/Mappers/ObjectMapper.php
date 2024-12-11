@@ -10,6 +10,7 @@ use TinyBlocks\Serializer\SerializeKeys;
 final readonly class ObjectMapper
 {
     private ValueMapper $valueMapper;
+
     private bool $shouldPreserveKeys;
 
     public function __construct(private SerializeKeys $serializeKeys)

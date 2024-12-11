@@ -6,7 +6,7 @@ namespace TinyBlocks\Serializer\Internal\Mappers;
 
 use TinyBlocks\Serializer\SerializeKeys;
 
-final class Mapper
+final readonly class Mapper
 {
     private ValueMapper $valueMapper;
 

@@ -16,8 +16,8 @@ interface Serializer
      * Serializes the object to a JSON string.
      *
      * The key serialization behavior can be customized using the `SerializeKeys` enum:
-     *  - `SerializeKeys::DISCARD`: Discards the array keys.
-     *  - `SerializeKeys::PRESERVE`: Preserves the array keys.
+     *  - {@see SerializeKeys::DISCARD}: Discards the array keys.
+     *  - {@see SerializeKeys::PRESERVE}: Preserves the array keys.
      *
      * By default, `SerializeKeys::PRESERVE` is used.
      *
@@ -31,8 +31,8 @@ interface Serializer
      * Converts the object to an array.
      *
      * The key serialization behavior can be customized using the `SerializeKeys` enum:
-     *  - `SerializeKeys::DISCARD`: Discards the array keys.
-     *  - `SerializeKeys::PRESERVE`: Preserves the array keys.
+     *  - {@see SerializeKeys::DISCARD}: Discards the array keys.
+     *  - {@see SerializeKeys::PRESERVE}: Preserves the array keys.
      *
      * By default, `SerializeKeys::PRESERVE` is used.
      *

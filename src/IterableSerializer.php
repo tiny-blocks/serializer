@@ -17,6 +17,7 @@ use TinyBlocks\Serializer\Internal\JsonSerializer;
 final readonly class IterableSerializer implements Serializer
 {
     private JsonSerializer $jsonSerializer;
+
     private ArraySerializer $arraySerializer;
 
     public function __construct(iterable $iterable)
